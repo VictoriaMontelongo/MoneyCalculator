@@ -17,7 +17,6 @@ public class FileCurrencyListLoader {
         this.filename = filename;
     }
     
-    @Override
     public Currency[] currencies(){
         List<Currency> list = new ArrayList<>();
         try{
