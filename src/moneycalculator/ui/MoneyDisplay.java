@@ -1,5 +1,12 @@
 package moneycalculator.ui;
 
-public class MoneyDisplay {
+public interface MoneyDisplay {
+    
+    String getText();
+    
+    void setText(String text);
+    
+    void display(String line);
+    
     
 }

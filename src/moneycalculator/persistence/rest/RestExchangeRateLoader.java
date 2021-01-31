@@ -1,8 +1,12 @@
 package moneycalculator.persistence.rest;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
+import static java.time.LocalDate.from;
 import moneycalculator.model.Currency;
 import moneycalculator.model.ExchangeRate;
 import moneycalculator.persistence.ExchangeRateLoader;
@@ -19,14 +23,12 @@ public class RestExchangeRateLoader implements ExchangeRateLoader{
     }
     
     private double read(String from, String to) throws IOException{
-        String line = read(new URL("http://api.fixer.io/latest?base=" + from + "&symbols" + to));
-        return Double.parseDouble(line.substring(line.indexOf(to) + 5 , line.indexOf("}")));
-    }
-    
-    private String read(URL url) throws IOException{
-        InputStream is = url.openStream();
-        byte[] buffer = new byte[1024];
-        int length = is.read(buffer);
-        return new String(buffer,0,length);
+        URL url = new URL("http://free.currencyconverterapi.com/api/v5/convert?q=" + from + "_" + to + "&compact=ultra&apiKey=y&apiKey=7e627ef1f163c48b0e71");
+        URLConnection connection = url.openConnection();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String line = reader.readLine();
+            String line1 = line.substring(line.indexOf(to) + 5, line.indexOf("}"));
+            return Double.parseDouble(line1);
+        }
     }
 }

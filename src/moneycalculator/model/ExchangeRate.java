@@ -7,13 +7,11 @@ public class ExchangeRate {
     private final double rate;
     private final Currency from;
     private final Currency to;
-    private final LocalDate date;
 
-    public ExchangeRate(double rate, Currency from, Currency to, LocalDate date) {
+    public ExchangeRate(Currency from, Currency to, double rate) {
         this.rate = rate;
         this.from = from;
         this.to = to;
-        this.date = date;
     }
 
     public Currency getTo() {
@@ -27,10 +25,5 @@ public class ExchangeRate {
     public Currency getFrom() {
         return from;
     }
-
-    public LocalDate getDate() {
-        return date;
-    }
-    
     
 }

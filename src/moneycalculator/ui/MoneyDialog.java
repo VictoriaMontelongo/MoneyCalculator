@@ -1,5 +1,19 @@
 package moneycalculator.ui;
 
-public class MoneyDialog {
+import moneycalculator.model.Currency;
+import moneycalculator.model.Money;
+
+public interface MoneyDialog {
     
+    String getText();
+    
+    Money getMoney();
+    
+    Currency getCurrencyTo();
+    
+    void setText(String text);
+    
+    String getCurrencyFromCode();
+    
+    String getCurrencyToCode();
 }
