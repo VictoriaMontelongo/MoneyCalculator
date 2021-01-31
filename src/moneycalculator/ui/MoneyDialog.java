@@ -7,13 +7,12 @@ public interface MoneyDialog {
     
     String getText();
     
+    void setText(String text);
+    
     Money getMoney();
     
     Currency getCurrencyTo();
     
-    void setText(String text);
+    Currency getCurrencyFrom();
     
-    String getCurrencyFromCode();
-    
-    String getCurrencyToCode();
 }

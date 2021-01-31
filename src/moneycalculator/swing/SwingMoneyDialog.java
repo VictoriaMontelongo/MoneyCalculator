@@ -1,93 +1,50 @@
 package moneycalculator.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import moneycalculator.model.Currency;
+import moneycalculator.model.CurrencyList;
 import moneycalculator.model.Money;
 import moneycalculator.ui.MoneyDialog;
 
 public class SwingMoneyDialog extends JPanel implements MoneyDialog{
     
-    private final Currency[] currencies;
+    private final CurrencyList currencies;
     private String amount;
     private Currency currency;
+    private JTextField amountField;
+    private JComboBox currenciesFrom;
+    private JComboBox currenciesTo;
 
-    public SwingMoneyDialog(List<Currency> currencies) {
-        this.currencies = currencies.toArray(new Currency[0]);
-        this.add(amount());
-        this.add(currency());
+    public SwingMoneyDialog(CurrencyList currencies) {
+        this.currencies = currencies;
+        this.setLayout(new BorderLayout());
+        initializeTextPanel(); 
+    }
+
+    private void initializeComboBox(CurrencyList currencies) {
+        currenciesFrom = new JComboBox();
+        currenciesTo = new JComboBox();
+        for (Map.Entry<String, Currency> String : currencies.getCurrencies().entrySet()) {
+            currenciesFrom.addItem(String);
+            currenciesTo.addItem(String);
+        }
     }
     
-    public Money get(){
-        return new Money(0, currency);
-    }
-
-    private Component amount() {
-        JTextField textField = new JTextField("100");
-        textField.setColumns(10);
-        textField.getDocument().addDocumentListener(amountChanged());
-        amount = textField.getText();
-        return textField;
-    }
-
-    private Component currency() {
-        JComboBox combo = new JComboBox(currencies);
-        combo.addItemListener(currencyChanged());
-        currency = (Currency) combo.getSelectedItem();
-        return combo;
-    }
-
-    private DocumentListener amountChanged() {
-        return new DocumentListener(){
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                amountChanged(e.getDocument());
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                amountChanged(e.getDocument());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                amountChanged(e.getDocument());
-            }
-            
-        };
-    }
-
-     private ItemListener currencyChangedFrom() {
-        return new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    return;
-                }
-                comboTo.addItem(currencyFrom); 
-                currencyFrom = (Currency) e.getItem();             
-                comboTo.removeItem(currencyFrom);
-            }
-        };
-    }
-
-    private ItemListener currencyChangedTo() {
-        return new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    return;
-                }
-                currencyTo = (Currency) e.getItem();
-            }
-        };
+    private void initializeBoxPanel(CurrencyList currencies) {
+        JPanel boxPanel = new JPanel();
+        boxPanel.add(new JLabel("Origin currency  "));
+        initializeComboBox(currencies);
+        boxPanel.add(currenciesFrom);
+        boxPanel.add(new JLabel("Destiny currency  "));
+        boxPanel.add(currenciesTo);
+        add(boxPanel, BorderLayout.NORTH);
     }
 
     @Override
@@ -97,17 +54,41 @@ public class SwingMoneyDialog extends JPanel implements MoneyDialog{
 
     @Override
     public void setText(String text) {
+        amountField.setText(text);
     }
 
     @Override
-    public String getCurrencyFromCode() {
-        return "";
+    public Money getMoney() {
+        Currency from = this.getCurrencyFrom();
+        Money result;
+        if(amountField.getText().matches("^[+]?([0-9]+(?:[\\.][0-9]*)?|\\.[0-9]+)$")){
+            result = new Money(Double.parseDouble(amountField.getText()),from);
+        }else{
+            result = new Money(0,from);
+        }
+        return result;
     }
 
     @Override
-    public String getCurrencyToCode() {
-        return currencyTo;
+    public Currency getCurrencyTo() {
+        String currencyTo = currenciesTo.getSelectedItem().toString();
+        currencyTo = currencyTo.substring(0, 3);
+        Currency to = currencies.get(currencyTo);
+        return to;
     }
     
+    public Currency getCurrencyFrom() {
+        String currencyFrom = currenciesFrom.getSelectedItem().toString();
+        currencyFrom = currencyFrom.substring(0, 3);
+        Currency from = currencies.get(currencyFrom);
+        return from;
+    }
     
+    private void initializeTextPanel() {
+        JPanel textPanel =  new JPanel();
+        amountField = new JTextField(20);
+        textPanel.add(new JLabel("Amount:  "));
+        textPanel.add(amountField);
+        add(textPanel, BorderLayout.CENTER);
+    }
 }

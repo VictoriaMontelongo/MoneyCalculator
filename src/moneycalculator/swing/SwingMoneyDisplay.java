@@ -24,5 +24,10 @@ public class SwingMoneyDisplay extends JPanel implements MoneyDisplay{
     public void setText(String text) {
         field.setText(text);
     }
+
+    @Override
+    public void display(String line) {
+        this.setText(line);
+    }
     
 }

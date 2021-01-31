@@ -11,17 +11,20 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import moneycalculator.model.Currency;
+import moneycalculator.model.CurrencyList;
 import moneycalculator.swing.SwingMoneyDialog;
 import moneycalculator.swing.SwingMoneyDisplay;
+import moneycalculator.ui.MoneyDialog;
+import moneycalculator.ui.MoneyDisplay;
 
 public class MoneyCalculatorFrame extends JFrame{
-    private final List<Currency> currencies;
+    private CurrencyList currencies;
     private SwingMoneyDialog moneyDialog;
     private SwingMoneyDisplay moneyDisplay;
     private final Map<String, Command> commands = new HashMap<>();
 
-    public MoneyCalculatorFrame(List<Currency> currencies) {
-        this.currencies = currencies;
+    public MoneyCalculatorFrame() {
+        //this.currencies = currencies;
         setTitle("Money Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -54,14 +57,22 @@ public class MoneyCalculatorFrame extends JFrame{
     public void execute() {
         setVisible(true);
     }
+    
+     public void addMoneyDialog(MoneyDialog moneyDialog){
+        this.add((SwingMoneyDialog)moneyDialog,BorderLayout.NORTH);
+    }
+    
+    public void addMoneyDisplay(MoneyDisplay moneyDisplay){
+        this.add((SwingMoneyDisplay)moneyDisplay,BorderLayout.CENTER);
+    }
 
-    private Component getMoneyDialog() {
+    public SwingMoneyDialog getMoneyDialog() {
         SwingMoneyDialog dialog  = new SwingMoneyDialog(currencies);
         moneyDialog = dialog;
         return dialog;
     }
 
-    private Component getMoneyDisplay() {
+    public SwingMoneyDisplay getMoneyDisplay() {
         SwingMoneyDisplay display  = new SwingMoneyDisplay();
         moneyDisplay = display;
         return display;
@@ -84,5 +95,9 @@ public class MoneyCalculatorFrame extends JFrame{
                 commands.get("Delete").execute();
             }
         };
+    }
+
+    public void addCommand(Command calculateCommand) {
+        commands.put("",calculateCommand);
     }
 }

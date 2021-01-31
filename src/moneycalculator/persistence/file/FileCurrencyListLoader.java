@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import moneycalculator.model.Currency;
+import moneycalculator.model.CurrencyList;
+import moneycalculator.persistence.CurrencyListLoader;
 
-public class FileCurrencyListLoader {
+public class FileCurrencyListLoader implements CurrencyListLoader{
     
     private final String filename;
 
