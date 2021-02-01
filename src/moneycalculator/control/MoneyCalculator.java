@@ -15,17 +15,10 @@ public class MoneyCalculator {
 
     public static void main(String[] args) {
         
-        CurrencyListLoader currencyListLoader = new FileCurrencyListLoader("currencies");
-        CurrencyList currencies = new CurrencyList();
-        ExchangeRateLoader exchangeRateLoader = new RestExchangeRateLoader();
-        MoneyCalculatorFrame mainFrame = new MoneyCalculatorFrame();
-  
-        MoneyDialog moneyDialog = new SwingMoneyDialog(currencies);
-        MoneyDisplay moneyDisplay = new SwingMoneyDisplay();
-        
-        mainFrame.addMoneyDialog(moneyDialog);
-        mainFrame.addMoneyDisplay(moneyDisplay);
-        mainFrame.addCommand(new CalculateCommand(mainFrame.getMoneyDialog(), mainFrame.getMoneyDisplay(), exchangeRateLoader));
+        CurrencyListLoader currencyLoader = new FileCurrencyListLoader("currencies");
+        ExchangeRateLoader ExchangeRateLoader = new RestExchangeRateLoader();
+        MoneyCalculatorFrame mainFrame = new MoneyCalculatorFrame(currencyLoader.currencies());
+        mainFrame.add(new CalculateCommand(mainFrame.getMoneyDialog(), mainFrame.getMoneyDisplay(), ExchangeRateLoader));
     }
     
 }

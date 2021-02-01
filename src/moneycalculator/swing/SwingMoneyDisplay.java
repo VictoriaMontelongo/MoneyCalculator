@@ -3,31 +3,27 @@ package moneycalculator.swing;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import moneycalculator.model.Money;
 import moneycalculator.ui.MoneyDisplay;
 
 public class SwingMoneyDisplay extends JPanel implements MoneyDisplay{
 
-    private final JTextField field;
+    private Money money;
 
-    public SwingMoneyDisplay() {
-        field = new JTextField(20);
-        add(new JLabel("Result: "));
-        add(field);
-    }
-    
-    @Override
-    public String getText() {
-        return field.getText();
+    public void display(Money money) {
+        this.money = money;
+        this.removeAll();
+        this.add(amount());
+        this.add(currency());
+        this.updateUI();
     }
 
-    @Override
-    public void setText(String text) {
-        field.setText(text);
+    private JLabel amount() {
+        return new JLabel(String.valueOf(String.valueOf(money.getAmount())));
     }
 
-    @Override
-    public void display(String line) {
-        this.setText(line);
+    private JLabel currency() {
+        return new JLabel(String.valueOf(String.valueOf(money.getCurrency().getCode())));
     }
     
 }

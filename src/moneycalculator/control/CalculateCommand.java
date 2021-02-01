@@ -22,17 +22,25 @@ public class CalculateCommand implements Command{
     
     @Override
     public void execute() {
-        Money money = moneyDialog.getMoney();
-        Currency to = moneyDialog.getCurrencyTo();
-        Money result = calculate(money, to, loader.load(money.getCurrency(), to));
-        moneyDisplay.display(money.getAmount() + " " + money.getCurrency().getSymbol() + 
-                             " equivalen a: " + result.getAmount() + " " + result.getCurrency().getSymbol());
+        moneyDisplay.display(exchange(moneyDialog.getMoney(), moneyDialog.getCurrencyTo()));
     }
+
+    private Money exchange(Money money, Currency currencyTo) {
+        return new Money(money.getAmount() * rateOf(money.getCurrency(), currencyTo), currencyTo);
+    }
+
 
     private Money calculate(Money money, Currency to, ExchangeRate loader) {
         Money result = new Money(money.getAmount() * loader.getRate(),to);
         return result;
     }
     
+    private double rateOf(Currency currencyFrom, Currency currencyTo) {
+        return loader.load(currencyFrom, currencyTo).getRate();
+    }
     
+    @Override
+    public String name() {
+        return "calculate";
+    }
 }

@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,86 +20,68 @@ import moneycalculator.ui.MoneyDialog;
 import moneycalculator.ui.MoneyDisplay;
 
 public class MoneyCalculatorFrame extends JFrame{
-    private CurrencyList currencies;
-    private SwingMoneyDialog moneyDialog;
-    private SwingMoneyDisplay moneyDisplay;
+    private final Currency[] currencies;
     private final Map<String, Command> commands = new HashMap<>();
+    private MoneyDialog moneyDialog;
+    private MoneyDisplay moneyDisplay;
 
-    public MoneyCalculatorFrame() {
-        //this.currencies = currencies;
-        setTitle("Money Calculator");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setSize(400, 200);
-        getContentPane().setLayout(new BorderLayout());
-        initializeMoneyDialog();
-        initializeMoneyDisplay();
-        initializeButtons();
-    }
-
-    private void initializeMoneyDialog() {
-        getContentPane().add(getMoneyDialog(), BorderLayout.NORTH);
-    }
-
-    private void initializeMoneyDisplay() {
-        getContentPane().add(getMoneyDisplay(), BorderLayout.SOUTH);
-    }
-
-    private void initializeButtons() {
-        JPanel buttonPanel = new JPanel();
-        JButton acceptButton = new JButton("Accept");
-        JButton deleteButton = new JButton("Delete");
-        acceptButton.addActionListener(accept());
-        deleteButton.addActionListener(delete());
-        buttonPanel.add(acceptButton);
-        buttonPanel.add(deleteButton);
-        getContentPane().add(buttonPanel, BorderLayout.CENTER);
+    public MoneyCalculatorFrame(Currency[] currencies) {
+        this.currencies = currencies;
+        this.setTitle("Money Calculator");
+        this.setSize(400, 150);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.add(toolbar(), BorderLayout.SOUTH);
+        this.add(moneyDialog(), BorderLayout.NORTH);
+        this.add(moneyDisplay(), BorderLayout.CENTER);
+        this.setVisible(true);
     }
     
-    public void execute() {
-        setVisible(true);
-    }
-    
-     public void addMoneyDialog(MoneyDialog moneyDialog){
-        this.add((SwingMoneyDialog)moneyDialog,BorderLayout.NORTH);
-    }
-    
-    public void addMoneyDisplay(MoneyDisplay moneyDisplay){
-        this.add((SwingMoneyDisplay)moneyDisplay,BorderLayout.CENTER);
+    public MoneyDialog getMoneyDialog() {
+        return moneyDialog;
     }
 
-    public SwingMoneyDialog getMoneyDialog() {
-        SwingMoneyDialog dialog  = new SwingMoneyDialog(currencies);
+    public MoneyDisplay getMoneyDisplay() {
+        return moneyDisplay;
+    }
+
+    public void add(Command command) {
+        commands.put(command.name(), command);
+    }
+    
+    private Component toolbar() {
+        JPanel panel = new JPanel();
+        panel.add(calculateButton());
+        return panel;
+    }
+
+    private Component moneyDialog() {
+        SwingMoneyDialog dialog = new SwingMoneyDialog(currencies);
         moneyDialog = dialog;
         return dialog;
     }
 
-    public SwingMoneyDisplay getMoneyDisplay() {
-        SwingMoneyDisplay display  = new SwingMoneyDisplay();
+    private Component moneyDisplay() {
+        SwingMoneyDisplay display = new SwingMoneyDisplay();
         moneyDisplay = display;
         return display;
     }
 
-    private ActionListener accept() {
-         return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                commands.get("Calculate").execute();
-            }
-        };
+
+    private JButton calculateButton() {
+        JButton button = new JButton("Calculate");
+        button.addActionListener(calculate());
+        return button;
     }
 
-    private ActionListener delete() {
-         
+    private ActionListener calculate() {
         return new ActionListener() {
+
             @Override
-            public void actionPerformed(ActionEvent e) {
-                commands.get("Delete").execute();
+            public void actionPerformed(ActionEvent ae) {
+                commands.get("calculate").execute();
             }
         };
     }
-
-    public void addCommand(Command calculateCommand) {
-        commands.put("",calculateCommand);
-    }
+     
 }
